@@ -1,0 +1,22 @@
+# Dune build output
+_build/
+
+# OCaml compilation artifacts
+*.cmi
+*.cmo
+*.cmx
+*.cmti
+*.cmt
+*.cma
+*.cmxa
+*.cmxs
+*.o
+*.a
+
+# Locally generated driver executable
+/compiler_driver
+
+# Vim temporary files
+*.swp
+*.swo
+*~
