@@ -1,0 +1,1 @@
+This repository contains the code for a C compiler I am writing in OCaml following the textbook "Writing a C Compiler" by Nora Sandler. The goal of the project is to familiarize myself with the intricacies of compilers and to learn best practices in software engineering along the way.
