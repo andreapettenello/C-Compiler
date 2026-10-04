@@ -36,19 +36,23 @@ let run_preprocessor filename =
         Sys.command ("gcc -E -P " ^ Filename.quote filename ^ " -o " ^ Filename.quote filename_ending_in_i)
 
 let run_compiler mode filename =
-    match mode with
-        |Full|Assembly_only -> let assembly_file_channel = open_out (c_to_assembly_suffix filename) in
-            output_string assembly_file_channel {|.text
-                                            .globl main
-                                            main:
-                                                movl $2, %eax
-                                                ret
+    let source_text = In_channel.with_open_bin (c_to_preprocessor_suffix filename) In_channel.input_all in
+        match Lexer.tokenize source_text with
+            |Ok tokens -> (match mode with
+                            |Lex_only -> Ok()
+                            |Full|Assembly_only -> let assembly_file_channel = open_out (c_to_assembly_suffix filename) in
+                                                     output_string assembly_file_channel {|.text
+                                                                                            .globl main
+                                                                                            main:
+                                                                                                 movl $2, %eax
+                                                                                                 ret
 
-                                            .section .note.GNU-stack,"",@progbits
-                                                                                |};
-            close_out assembly_file_channel;
-            Ok ()
-        |Lex_only|Parse_only|Codegen_only -> Ok ()
+                                                                                            .section .note.GNU-stack,"",@progbits
+                                                                                            |};
+                                                    close_out assembly_file_channel;
+                                                    Ok ()
+                            |Parse_only|Codegen_only -> Ok())
+            |Error message -> Error message
 
 let run_assembler_and_linker filename = 
     let filename_without_suffix = Filename.chop_suffix filename ".s" in
